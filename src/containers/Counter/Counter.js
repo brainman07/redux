@@ -3,37 +3,50 @@ import { connect } from 'react-redux';
 
 import CounterControl from '../../components/CounterControl/CounterControl';
 import CounterOutput from '../../components/CounterOutput/CounterOutput';
+import * as actions from '../../store/actions'
 
 class Counter extends Component {
     state = {
         counter: 0
     }
 
-    counterChangedHandler = ( action, value ) => {
-        switch ( action ) {
+    counterChangedHandler = (action, value) => {
+        switch (action) {
             case 'inc':
-                this.setState( ( prevState ) => { return { counter: prevState.counter + 1 } } )
+                this.setState((prevState) => { return { counter: prevState.counter + 1 } })
                 break;
             case 'dec':
-                this.setState( ( prevState ) => { return { counter: prevState.counter - 1 } } )
+                this.setState((prevState) => { return { counter: prevState.counter - 1 } })
                 break;
             case 'add':
-                this.setState( ( prevState ) => { return { counter: prevState.counter + value } } )
+                this.setState((prevState) => { return { counter: prevState.counter + value } })
                 break;
             case 'sub':
-                this.setState( ( prevState ) => { return { counter: prevState.counter - value } } )
+                this.setState((prevState) => { return { counter: prevState.counter - value } })
                 break;
         }
     }
 
-    render () {
+    render() {
         return (
             <div>
                 <CounterOutput value={this.props.ctr} />
-                <CounterControl label="Increment" clicked={() => this.props.dispatch({type: 'INCREMENT'})} />
-                <CounterControl label="Decrement" clicked={() => this.props.dispatch({type: 'DECREMENT'})} />
-                <CounterControl label="Add 5" clicked={() => this.props.dispatch({type: 'ADD', value: 5})}  />
-                <CounterControl label="Subtract 5" clicked={() => this.props.dispatch({type: 'SUBTRACT', value: 5})}  />
+                <CounterControl label="Increment" clicked={() => this.props.dispatch({ type: actions.INCREMENT })} />
+                <CounterControl label="Decrement" clicked={() => this.props.dispatch({ type: actions.DECREMENT })} />
+                <CounterControl label="Add 5" clicked={() => this.props.dispatch({ type: actions.ADD, value: 5 })} />
+                <CounterControl label="Subtract 5" clicked={() => this.props.dispatch({ type: actions.SUBTRACT, value: 5 })} />
+                <hr />
+                <button onClick={() => this.props.dispatch({ type: actions.STORE_RESULT })}>Store Result</button>
+                <ul>
+                    {this.props.storedResults.map(strResult => (
+                        <li
+                            key={strResult.id}
+                            onClick={() => this.props.dispatch({ type: 'DELETE_RESULT', id: strResult.id})}
+                        >
+                            {strResult.value}
+                        </li>
+                    ))}
+                </ul>
             </div>
         );
     }
@@ -41,7 +54,8 @@ class Counter extends Component {
 
 const mapStateToProps = state => {
     return {
-        ctr: state.counter
+        ctr: state.counter,
+        storedResults: state.results
     };
 }
 
@@ -51,6 +65,8 @@ const mapStateToProps = state => {
 //         onDecrementCounter: () => dispatch({type: 'DECREMENT'}),
 //         onAddCounter: () => dispatch({type: 'ADD', value: 5}),
 //         onSubtractCounter: () => dispatch({type: 'SUBTRACT', value: 5}),
+//         onStoreResult: () => dispatch({type: 'STORE_RESULT'}),
+//         onDeleteResult: (id) => dispatch({type: 'DELETE_RESULT', id}),
 //     }
 // }
 
